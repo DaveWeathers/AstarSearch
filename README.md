@@ -40,7 +40,7 @@ The goal of this assignment is to give you some experience applying the A* searc
 
 ## Implement your part of the code
 
-Your task is to implement the constructor of `edu.uab.cis.search.maze.Solver`, filling in the `explored` and `path` fields as appropriate. **Do not modify any other files.** You should implement this using A* search with an L1 heuristic. Specifically, squares should be explored with the following strategy:
+Your task is to implement the constructor of `edu.uab.cis.search.maze.Solver`, filling in the `explored` and `path` fields as appropriate. You should implement this using A* search with an L1 heuristic. Specifically, squares should be explored with the following strategy:
 
 * Squares are ordered for exploration using the score `f(x) = g(x) + h(x)`, with the smallest `f(x)` squares being explored first
 * `g(x)` is the length of the path so far, from the start square to the current square, including the steps necessary to avoid obstacles
@@ -48,6 +48,8 @@ Your task is to implement the constructor of `edu.uab.cis.search.maze.Solver`, f
 * Squares with the same `f(x)` score are ordered by the `h(x)` score, with smaller `h(x)` scores first
 * Squares with the same `f(x)` and `h(x)` scores are ordered by row, with smaller rows first
 * Squares with the same `f(x)`, `h(x)` and row should be ordered by column, with smaller columns first
+
+You may modify only `src/main/java/edu/uab/cis/search/maze/Solver.java` and `src/test/java/edu/uab/cis/search/maze/SolverTest.java`. **Do not modify any other files.** If you need to declare any additional classes, please do so in one of these files.
 
 ## Test your code
 
