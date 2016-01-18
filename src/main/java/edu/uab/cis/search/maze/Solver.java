@@ -39,8 +39,8 @@ public class Solver {
   }
 
   /**
-   * @return The squares along the path from the start to the goal, not
-   *         including the start square and the goal square.
+   * @return The squares along the path from the start to the goal,
+   *         including both the start square and the goal square.
    */
   public List<Square> getPathFromStartToGoal() {
     return this.path;
