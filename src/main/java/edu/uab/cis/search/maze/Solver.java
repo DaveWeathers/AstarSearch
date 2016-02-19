@@ -1,6 +1,11 @@
 package edu.uab.cis.search.maze;
 
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -24,10 +29,12 @@ import java.util.Set;
  */
 public class Solver {
 
-  private Set<Square> explored;
-
-  private List<Square> path;
-
+    private Set<Square> explored = new HashSet<Square>();
+	  private HashMap<Square, Integer> map = new HashMap<Square, Integer>();
+	  private HashMap<Square, Square> pChild = new HashMap<Square, Square>();
+	 
+	  private List<Square> path = new ArrayList<Square>();
+  Maze maze;
   /**
    * Solves the given maze, determining the path to the goal.
    * 
@@ -35,9 +42,22 @@ public class Solver {
    *          The maze to be solved.
    */
   public Solver(Maze maze) {
-    // TODO
+    this.maze = maze;
+    map.put(maze.getStart(), 0);
+    neighbors.add(maze.getStart());    
+    Square current = maze.getStart();
+    outer: while(!neighbors.isEmpty()){
+    	current = neighbors.poll();
+    	if(current.equals(maze.getGoal())){
+    		buildPath(current);
+    		explored.add(current);
+    		break outer;
+    	}
+    	exploreNeighbors(current);
+    }
+    
   }
-
+  
   /**
    * @return The squares along the path from the start to the goal,
    *         including both the start square and the goal square.
@@ -45,7 +65,22 @@ public class Solver {
   public List<Square> getPathFromStartToGoal() {
     return this.path;
   }
-
+  private void exploreNeighbors(Square square){
+	  explored.add(square);
+	  Square[] nesw = {
+			  new Square(square.getRow()-1, square.getColumn()),
+			  new Square(square.getRow(), square.getColumn()+1),
+			  new Square(square.getRow()+1, square.getColumn()),
+			  new Square(square.getRow(), square.getColumn()-1)};
+	  	for(int i = 0; i < 4; i++){
+	  		if(!maze.isBlocked(nesw[i]) && !explored.contains(nesw[i]) && !neighbors.contains(nesw[i])){
+	  			map.put(nesw[i], map.get(square)+1);
+	  			pChild.put(nesw[i], square);
+	  			neighbors.add(nesw[i]);
+	  				}
+	  			}
+	  		}
+	  		
   /**
    * @return All squares that were explored during the search process. This is
    *         always a superset of the squares returned by
@@ -55,4 +90,56 @@ public class Solver {
     return this.explored;
   }
 
+  private int hX(Square square){
+	   return (Math.abs(maze.getGoal().getRow()-square.getRow()) + Math.abs(maze.getGoal().getColumn()-square.getColumn()));
+	   }
+  
+  
+  private void buildPath(Square square){
+	  Square current = square;
+	  List<Square> temp = new ArrayList<Square>();
+	  temp.add(current);
+	  while(!current.equals(maze.getStart())){
+		  temp.add(pChild.get(current));
+		  current = pChild.get(current);
+	  }
+	  for(int i = temp.size()-1; i >= 0; i--){
+		  path.add(temp.get(i));
+	  }
+	  
+  }
+  /**
+   * 
+   *  Creates PriorityQueue following given rules. 
+  */
+  private PriorityQueue<Square> neighbors = new PriorityQueue<Square>(1, new Comparator<Square>(){
+	  public int compare(Square s1, Square s2){
+		  if(map.get(s1) + hX(s1) > map.get(s2) + hX(s2)){
+			  return 1;
+		  }else if(map.get(s1) + hX(s1) < map.get(s2) + hX(s2)){
+			  return -1;
+		  }else{
+			  if(hX(s1) > hX(s2)){
+				  return 1;
+			  }else if(hX(s1) < hX(s2)){
+				  return -1;
+			  }else {
+				  if(s1.getRow() > s2.getRow()){
+					  return 1;
+				  }
+				  if(s1.getRow()< s2.getRow()){
+					  return -1;
+				  }else{
+					  if(s1.getColumn() > s2.getColumn()){
+						  return 1;
+					  }else if(s1.getColumn() < s2.getColumn()){
+						  return -1;
+					  }else { return 0;}
+				  }
+			  }
+		  }
+	  }
+  });
 }
+
+
